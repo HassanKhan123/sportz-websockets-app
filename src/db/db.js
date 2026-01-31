@@ -1,6 +1,10 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
-import pg from "pg";
+import { neon } from "@neondatabase/serverless";
 
-export const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle(pool);
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set in environment variables");
+}
+
+const sql = neon(process.env.DATABASE_URL);
+export const db = drizzle(sql);
